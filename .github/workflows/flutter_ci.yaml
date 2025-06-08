@@ -39,7 +39,7 @@ jobs:
 
       # 2.6 Upload coverage as an artifact
       - name: Upload coverage report
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: coverage
           path: coverage/lcov.info # Ensure this path matches your coverage output
@@ -62,7 +62,7 @@ jobs:
 
       # 3.2 Upload APK as artifact
       - name: Upload APK
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: app-release.apk
           path: build/app/outputs/flutter-apk/app-release.apk # Change if your APK output path is different
@@ -85,7 +85,7 @@ jobs:
           flutter build ipa --export-options-plist=ios/ExportOptions.plist # Ensure ExportOptions.plist exists and is configured for your project
 
       - name: Upload IPA
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: app-release.ipa
           path: build/ios/ipa/*.ipa # Change if your IPA output path is different
