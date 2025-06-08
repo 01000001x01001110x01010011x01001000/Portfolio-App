@@ -1,0 +1,98 @@
+# File: .github/workflows/flutter_ci.yml
+
+name: Flutter CI/CD
+
+# 1. When to run this workflow
+on:
+  push:
+    branches: [ master ] # Change 'main' if your default branch is different
+  pull_request:
+    branches: [ master ] # Change 'main' if your default branch is different
+
+jobs:
+  analyze-and-test:
+    name: Analyze & Test (Linux)
+    runs-on: ubuntu-latest
+
+    steps:
+      # 2.1 Check out your source code
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      # 2.2 Install Flutter SDK
+      - name: Setup Flutter
+        uses: subosito/flutter-action@v2
+        with:
+          flutter-version: '3.29.2' # Change if you want a specific Flutter version
+
+      # 2.3 Ensure Flutter dependencies are in place
+      - name: Install dependencies
+        run: flutter pub get
+
+      # 2.4 Static analysis
+      - name: Analyze code
+        run: flutter analyze
+
+      # 2.5 Run unit & widget tests
+      - name: Run tests
+        run: flutter test --coverage
+
+      # 2.6 Upload coverage as an artifact
+      - name: Upload coverage report
+        uses: actions/upload-artifact@v3
+        with:
+          name: coverage
+          path: coverage/lcov.info # Ensure this path matches your coverage output
+
+  build-android:
+    name: Build Android APK
+    runs-on: ubuntu-latest
+    needs: analyze-and-test
+
+    steps:
+      - uses: actions/checkout@v4
+      - uses: subosito/flutter-action@v2
+        with:
+          flutter-version: '3.29.2' # Change if you want a specific Flutter version
+      - run: flutter pub get
+
+      # 3.1 Build a release APK
+      - name: Build APK
+        run: flutter build apk --release # Add build flavors or options if needed
+
+      # 3.2 Upload APK as artifact
+      - name: Upload APK
+        uses: actions/upload-artifact@v3
+        with:
+          name: app-release.apk
+          path: build/app/outputs/flutter-apk/app-release.apk # Change if your APK output path is different
+
+  build-ios:
+    name: Build iOS IPA
+    runs-on: macos-latest
+    needs: analyze-and-test
+
+    steps:
+      - uses: actions/checkout@v4
+      - uses: subosito/flutter-action@v2
+        with:
+          flutter-version: '3.29.2' # Change if you want a specific Flutter version
+      - run: flutter pub get
+
+      # 3.3 Build an iOS archive
+      - name: Build IPA
+        run: |
+          flutter build ipa --export-options-plist=ios/ExportOptions.plist # Ensure ExportOptions.plist exists and is configured for your project
+
+      - name: Upload IPA
+        uses: actions/upload-artifact@v3
+        with:
+          name: app-release.ipa
+          path: build/ios/ipa/*.ipa # Change if your IPA output path is different
+
+# Things to change according to your project:
+# - Branch names under 'on' (e.g., 'main')
+# - Flutter version if you need a specific one
+# - Output paths for coverage, APK, and IPA if your project structure differs
+# - ExportOptions.plist path and content for iOS builds
+# - Add/remove jobs or steps as needed for your workflow (e.g., web build, code signing, deployment)
