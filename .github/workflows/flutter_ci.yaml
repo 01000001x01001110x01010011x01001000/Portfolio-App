@@ -67,28 +67,28 @@ jobs:
           name: app-release.apk
           path: build/app/outputs/flutter-apk/app-release.apk # Change if your APK output path is different
 
-  build-ios:
-    name: Build iOS IPA
-    runs-on: macos-latest
-    needs: analyze-and-test
+  # build-ios:
+  #   name: Build iOS IPA
+  #   runs-on: macos-latest
+  #   needs: analyze-and-test
 
-    steps:
-      - uses: actions/checkout@v4
-      - uses: subosito/flutter-action@v2
-        with:
-          flutter-version: '3.29.2' # Change if you want a specific Flutter version
-      - run: flutter pub get
+  #   steps:
+  #     - uses: actions/checkout@v4
+  #     - uses: subosito/flutter-action@v2
+  #       with:
+  #         flutter-version: '3.29.2' # Change if you want a specific Flutter version
+  #     - run: flutter pub get
 
-      # 3.3 Build an iOS archive
-      - name: Build IPA
-        run: |
-          flutter build ipa --export-options-plist=ios/ExportOptions.plist # Ensure ExportOptions.plist exists and is configured for your project
+  #     # 3.3 Build an iOS archive
+  #     - name: Build IPA
+  #       run: |
+  #         flutter build ipa --export-options-plist=ios/ExportOptions.plist # Ensure ExportOptions.plist exists and is configured for your project
 
-      - name: Upload IPA
-        uses: actions/upload-artifact@v4
-        with:
-          name: app-release.ipa
-          path: build/ios/ipa/*.ipa # Change if your IPA output path is different
+  #     - name: Upload IPA
+  #       uses: actions/upload-artifact@v4
+  #       with:
+  #         name: app-release.ipa
+  #         path: build/ios/ipa/*.ipa # Change if your IPA output path is different
 
 # Things to change according to your project:
 # - Branch names under 'on' (e.g., 'main')
